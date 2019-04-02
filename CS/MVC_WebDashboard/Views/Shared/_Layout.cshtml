@@ -26,7 +26,7 @@
 
         function onTextAreaChanged() {
             if (undoExtension !== undefined)
-                undoExtension.undoEngine().isDirty(true);
+                undoExtension.isChanged(true);
         }
 
         function onSaveClick() {
@@ -39,12 +39,13 @@
                 url: '@Url.Action("SaveDashboard", "Home")',
                 data: params,
                 type: 'POST',
-                async: true
-            }).success(function () {
-                if (undoExtension !== undefined)
-                    undoExtension.undoEngine().isDirty(false);
-                if (toolboxExtension !== undefined)
-                    toolboxExtension.menuVisible(false);
+                async: true,
+                success : function() {
+                    if (undoExtension !== undefined)
+                        undoExtension.isChanged(false);
+                    if (toolboxExtension !== undefined)
+                        toolboxExtension.menuVisible(false);
+                }
             });
         }
 
@@ -57,14 +58,15 @@
                 toolboxExtension.addMenuItem(new DevExpress.Dashboard.DashboardMenuItem("custom-save-item", "Save", 108, 0, onSaveClick));
             }
         }
-        function onDashboardChanged(s, e) {
+        function onDashboardInitialized(s, e) {
             $.ajax({
                 url: '@Url.Action("GetDashboardParameter", "Home")',
                 data: { DashboardID: e.DashboardId, ParameterName: "Parameter" },
                 type: 'POST',
-                async: true
-            }).success(function (data) {
-                $("#dashboardDescription").val(data);
+                async: true,
+                success: function (data) {
+                    $("#dashboardDescription").val(data);
+                }
             });
         }
     </script>
